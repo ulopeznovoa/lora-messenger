@@ -1,19 +1,46 @@
 ## brazil-wireless-counter
 Software for the Citizen Science project - Data collection in Sete Barras, Brazil
 
-### Setting the Raspberry Pi as a Wi-Fi Access Point
+### Building blocks
 
-Follow: http://www.raspberryconnect.com/network/item/333-raspberry-pi-hotspot-access-point-dhcpcd-method
+1. Hostapd and dnsmasq to serve a Wi-Fi hotspot 
+2. Python to serve a web page and RESTful services
+3. Lora modules to interface with the antenna
 
-The tests have been done configuring the 192.168.4.0 network, assigning 192.168.4.1 to the Pi and the range de 192.168.4.2 - .20 to the connecting devices.
+### Setup
 
-### Running a web server to control de counter
+These guidelines have been ellaborated using a Raspberry Pi model 3 and Raspbian.
 
-Python as a web server, using a HTML template and jQuery
+Firstly, configure the Raspberry as a Wi-Fi hotspot following this tutorial:
+http://www.raspberryconnect.com/network/item/333-raspberry-pi-hotspot-access-point-dhcpcd-method
+In our tests, the Pis have used this configuration:
 
-Go into python_server and run 'python server.py'
-Open web browser and head to 'http://localhost:5002'
+ *Network: 192.168.4.0 
+ *IP for the Pi: 192.168.4.1 
+ *Range: 192.168.4.2 - .20 
 
-### Using Lora to transmit the counter
+After this, clone this repository in a folder. In our tests we have used ~/Documents.
 
-Based in the arduino code 
+Assuming that Python and pip are installed in the sytem, use the following command to install the required modules to run the web service:
+
+```
+pip install flask flask-restful
+```
+
+Finally, enable SUID in the LoRa binary. This is required for the software to use the LoRa module. From the directory where you have clonned the repo, type:
+
+```
+cd lora_interface/cooking/code/LoRa/
+sudo ./make_suid ./main-tx-rx.cpp_exe
+```
+
+Optional: the letter in counter.conf (root of the repository) is read by the web server to show the RPi name in the web page. Change it to show a different one.
+
+### Running the service
+
+From the root of the repository, type:
+
+```
+cd python_server
+python server.py
+```
