@@ -8,6 +8,7 @@ app = Flask(__name__, static_url_path='')
 api = Api(app)
 
 filename = "../counterFile.dat"
+configfile = "../counter.conf"
 lora_binary = "../lora_interface/cooking/code/LoRa/main-tx-rx.cpp_exe"
 
 class Increment(Resource):
@@ -70,10 +71,16 @@ def home():
     counter_val = file.read()
     file.close()
     
+    file = open(configfile, 'r')
+    rpi_name = file.read()
+    file.close()
+ 
+
     file = open('home.html','r')
     html_string = file.read()
     file.close()
     html_string = html_string.replace('counter-to-replace',counter_val)
+    html_string = html_string.replace('rpi-name',rpi_name)
 
     return html_string
 
