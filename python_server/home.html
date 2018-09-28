@@ -26,16 +26,64 @@ a:hover { text-decoration: none; color: #C00; background: #FC0; }
  
   $(document).ready(function() {
      $('#incButton').click(function(){
-
 	     $.get("/increment", function(data) {
-
 		$("h2").html(data.value);
-
-		console.log(data.value);
-		     
+		console.log('Increment hit: '+data.value);		     
 	     });      
 
      });
+
+     $('#decButton').click(function(){
+	     $.get("/decrement", function(data) {
+		$("h2").html(data.value);
+		console.log('Decrement hit: '+data.value);		     
+	     });      
+
+     });
+
+     $('#refButton').click(function(){
+	     $.get("/refresh", function(data) {
+		$("h2").html(data.value);
+		console.log('Refresh hit: '+data.value);		     
+	     });      
+
+     });
+
+     $('#traButton').click(function(){
+
+	     var dt = new Date($.now());
+	     var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+	     $("h5").html("Transmission start: "+time);
+
+	     $.get("/transmit", function(data) {
+		console.log('Transmit hit: '+data.value);		
+
+  	        var dt = new Date($.now());
+	        var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+	        $("h5").html("Transmission end: "+time);
+	     });      
+
+     });
+
+     $('#recButton').click(function(){
+
+	     var dt = new Date($.now());
+	     var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+	     $("h5").html("Reception start: "+time);
+
+	     $.get("/receive", function(data) {
+		$("h2").html(data.value);
+		console.log('Receive hit: '+data.value);		    
+
+  	        var dt = new Date($.now());
+	        var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+	        $("h5").html("Reception end: "+time);
+
+	     });      
+
+     });
+
+
   });
   </script>
 	
@@ -53,8 +101,13 @@ a:hover { text-decoration: none; color: #C00; background: #FC0; }
   <h2>counter-to-replace</h2>
 
   <button id="incButton" >Increment</button>
-  <button >Refresh</button>
+  <button id="decButton" >Decrement</button>
+  <button id="refButton" >Refresh</button>
+  <button id="traButton" >Transmit</button>
+  <button id="recButton" >Receive</button>
 
+  <h4>Transmission / Reception Status:</h4>
+  <h5>Idle</h5>
 
 
  </div>

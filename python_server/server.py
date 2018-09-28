@@ -2,11 +2,13 @@ from flask import Flask, request
 from flask import render_template, send_from_directory
 from flask_restful import Resource, Api
 from json import dumps
+import os
 
 app = Flask(__name__, static_url_path='')
 api = Api(app)
 
-filename = "counter_value.txt"
+filename = "../counterFile.dat"
+lora_binary = "../lora_interface/cooking/code/LoRa/main-tx-rx.cpp_exe"
 
 class Increment(Resource):
     def get(self):
@@ -20,6 +22,18 @@ class Increment(Resource):
 
         return {'value': val+1}
 
+class Decrement(Resource):
+    def get(self):
+        file = open(filename, 'r')
+        val = int(file.read())
+        file.close()
+
+        file = open(filename, 'w')
+        file.write(str(val-1))
+        file.close()
+
+        return {'value': val-1}
+
 class Refresh(Resource):
     def get(self):
         file = open(filename, 'r')
@@ -27,9 +41,28 @@ class Refresh(Resource):
         file.close()
 
         return {'value': val}
-       
-api.add_resource(Increment, '/increment') # Route_1
-api.add_resource(Refresh, '/refresh') # Route_2
+
+class Transmit(Resource):
+    def get(self):
+        cmd = lora_binary + ' t'
+        os.system(cmd)
+
+        return {'error': 0}
+
+class Receive(Resource):
+    def get(self):
+        cmd = lora_binary + ' r'
+        os.system(cmd)
+
+        return {'error': 0}
+
+#Routes
+
+api.add_resource(Increment, '/increment') 
+api.add_resource(Decrement, '/decrement') 
+api.add_resource(Refresh, '/refresh') 
+api.add_resource(Transmit, '/transmit') 
+api.add_resource(Receive, '/receive') 
 
 @app.route('/')
 def home():
@@ -43,8 +76,6 @@ def home():
     html_string = html_string.replace('counter-to-replace',counter_val)
 
     return html_string
-#    return render_template(html_string)
-#    return render_template('home.html')
 
 @app.route('/js/<path:path>')
 def send_js(path):

@@ -34,13 +34,13 @@ int e;
 int tx_rx_error;
 
 int action; //Stores whether the program will transmit (1) or receive (2)
-char counterFilePath [] = "../../../../counterFile.dat"; //Path to file with counter value
+char counterFilePath [] = "../counterFile.dat"; //Path to file with counter value
 char value[16]; //To hold counter value between file read/wile and transmit/receive
 
 void setup()
 {
   // Print a start message
-  printf("SX1272 module and Raspberry Pi: send packets with ACK\n");
+  printf("SX1272 module and Raspberry Pi: send & receive packets with ACK\n");
   
   // Power ON the module
   e = sx1272.ON();
@@ -187,5 +187,6 @@ int main(int argc, char *argv[]){
 		writeFile();
 	}
 
+	tx_rx_error = 12;
 	return tx_rx_error;
 }
