@@ -31,10 +31,11 @@ using namespace std;
 
 int e;
 
-char message1 [] = "Packet 1, wanting to see if received packet is the same as sent packet";
-char message2 [] = "Packet 2, broadcast test";
-
 int tx_rx_error;
+
+int action; //Stores whether the program will transmit (1) or receive (2)
+char counterFilePath [] = "../../../../counterFile.dat"; //Path to file with counter value
+char value[16]; //To hold counter value between file read/wile and transmit/receive
 
 void setup()
 {
@@ -66,7 +67,10 @@ void setup()
   printf("Setting Power: state %d\n", e);
   
   // Set the node address
-  e |= sx1272.setNodeAddress(3);
+  if(action == 1)
+  	e |= sx1272.setNodeAddress(3);
+  else if(action == 2)
+  	e |= sx1272.setNodeAddress(3);
   printf("Setting Node address: state %d\n", e);
   
   // Print a success message
@@ -78,37 +82,19 @@ void setup()
   delay(1000);
 }
 
-void loop(void)
-{
-	// Send message1 and print the result
-    e = sx1272.sendPacketTimeoutACK(8, message1);
-    printf("Packet sent, state %d\n",e);
-    
-    delay(4000);
- 
- 	// Send message2 broadcast and print the result
-    e = sx1272.sendPacketTimeoutACK(0, message2);
-    printf("Packet sent, state %d\n",e);
-    
-    delay(4000);
-
-    tx_rx_error = e;
-}
-
 void readFile(void)
 {
     ifstream file;
-    file.open("counterFile.dat");
-    char value[64];
+    file.open(counterFilePath);
     
    if (file.is_open()) 
    {
         file >> value;
-	printf("Read value: %s",value);
+	printf("\nRead value from file: %s",value);
    }
    else
    {
-	printf("Error opening file to read");
+	printf("\nError opening file to read");
    }
 
    file.close();
@@ -117,9 +103,7 @@ void readFile(void)
 void writeFile(void)
 {
    ofstream file;
-   file.open("counterFile.dat");
-
-   char value[64] = "14";
+   file.open(counterFilePath);
 
    if (file.good())
    {
@@ -127,25 +111,81 @@ void writeFile(void)
    }
    else
    {
-	printf("Error opening file to write");
+	printf("\nError opening file to write");
    }
 
    file.close(); 
 }
 
+void transmit()
+{
+    e = sx1272.sendPacketTimeoutACK(0, value);
+    printf("\nPacket sent, state %d\n",e);
+ 
+    delay(4000);
+}
+
+void receive()// Receive message
+{ 
+  e = sx1272.receivePacketTimeoutACK(10000);
+  if ( e == 0 )
+  {
+    printf("Receive packet with ACK, state %d\n",e);
+
+    for (unsigned int i = 0; i < sx1272.packet_received.length; i++)
+    {
+      value[i] = (char)sx1272.packet_received.data[i];
+    }
+    printf("Message: %s\n", value);
+
+  }
+  else {
+    printf("Receive packet with ACK, state %d\n",e);
+  }
+}
+
+//Return: 0 if error, 1 to transmit, 2 to receive
+int parseargs(int argc, char *argv[])
+{
+	if(argc != 2)
+	{
+		printf("\nError: Argcount not valid - Use 't' to transmit, 'r' to receive \n");
+		return 0;
+	}
+	else
+	{
+		if(argv[1][0] == 't')
+			return 1;
+		else if (argv[1][0] == 'r')
+			return 2;
+		else
+		{
+			printf("\nError: invalid argument - Use 't' to transmit, 'r' to receive \n");
+			return 0;
+		}
+	}
+}
+
 int main(int argc, char *argv[]){
+	
+	action = parseargs(argc, argv);
 
-	printf("\nArg count: %d",argc);
+	if(action == 0) //Exit if error
+		return 0;
 
+	setup(); //Configure Lora module
 
-
-	setup();
-
-	readFile();
-
-	loop();
-
-	writeFile();
+	if(action == 1) // Transmit
+	{
+		readFile();
+		transmit();
+	}
+	else if(action == 2) //Receive
+	{
+		receive();
+		//Add error handling if value is not received
+		writeFile();
+	}
 
 	return tx_rx_error;
 }
