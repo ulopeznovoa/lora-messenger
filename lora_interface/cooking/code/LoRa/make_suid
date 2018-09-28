@@ -1,0 +1,6 @@
+#!/bin/bash
+
+file="./$1"
+
+chown root.root $file
+chmod 4755 $file
