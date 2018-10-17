@@ -25,33 +25,20 @@ a:hover { text-decoration: none; color: #C00; background: #FC0; }
   <script>
  
   $(document).ready(function() {
-     $('#incButton').click(function(){
-	     $.get("/increment", function(data) {
-		$("h2").html(data.value);
-		console.log('Increment hit: '+data.value);		     
-	     });      
 
-     });
+    // setInterval(function(){ console.log('hello');}, 3000);
 
-     $('#decButton').click(function(){
-	     $.get("/decrement", function(data) {
-		$("h2").html(data.value);
-		console.log('Decrement hit: '+data.value);		     
-	     });      
-
-     });
-
-     $('#refButton').click(function(){
-	     $.get("/refresh", function(data) {
-		$("h2").html(data.value);
-		console.log('Refresh hit: '+data.value);		     
-	     });      
-
-     });
+   //  function x(){ console.log('hello2');}     
+   //  setInterval(x, 3000);
 
      $('#traButton').click(function(){
 
-	     var dt = new Date($.now());
+	     var msg = $("#messageToSend").val();
+	     console.log(msg);
+
+	     $.post("/transmit", {'message': msg} )		
+
+	  /*   var dt = new Date($.now());
 	     var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
 	     $("h5").html("Transmission start: "+time);
 
@@ -61,7 +48,8 @@ a:hover { text-decoration: none; color: #C00; background: #FC0; }
   	        var dt = new Date($.now());
 	        var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
 	        $("h5").html("Transmission end: "+time);
-	     });      
+	     }); 
+	*/     
 
      });
 
@@ -72,8 +60,8 @@ a:hover { text-decoration: none; color: #C00; background: #FC0; }
 	     $("h5").html("Reception start: "+time);
 
 	     $.get("/receive", function(data) {
-		$("h2").html(data.value);
-		console.log('Receive hit: '+data.value);		    
+		$("#messageBox").html(data['message']);
+		console.log('Received message: '+data['message']);
 
   	        var dt = new Date($.now());
 	        var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
@@ -98,18 +86,18 @@ a:hover { text-decoration: none; color: #C00; background: #FC0; }
  </div>
  <div id="body">
 
-  Use the buttons below to control the counter:
+  Type the message you want to send in the following box:<br><br>
 
+  <input id="messageToSend" type="text" name="messageToSend" maxlength="20" size="40"><br><br>
 
-  <h2>counter-to-replace</h2>
-
-  <button id="incButton" >Increment</button>
-  <button id="decButton" >Decrement</button>
-  <button id="refButton" >Refresh</button>
   <button id="traButton" >Transmit</button>
   <button id="recButton" >Receive</button>
 
-  <h4>Transmission / Reception Status:</h4>
+  <br><br>Received message: (auto-refresh every 5 secs):
+
+  <h4 id="messageBox">Received message will be here </h4>
+
+  Transmission / Reception Status:
   <h5>Idle</h5>
 
 

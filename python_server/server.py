@@ -1,76 +1,49 @@
 from flask import Flask, request
 from flask import render_template, send_from_directory
-from flask_restful import Resource, Api
+from flask_restful import Resource, Api, reqparse
 from json import dumps
 import os
 
 app = Flask(__name__, static_url_path='')
 api = Api(app)
 
-filename = "../counterFile.dat"
 configfile = "../counter.conf"
-lora_binary = "../lora_interface/cooking/code/LoRa/main-tx-rx.cpp_exe"
+sendbuffer = "../send.dat"
+receivebuffer = "../receive.dat"
+sendflag = "../sendflag.dat"
 
-class Increment(Resource):
-    def get(self):
-        file = open(filename, 'r')
-        val = int(file.read())
-        file.close()
+#lora_binary = "../lora_interface/cooking/code/LoRa/main-tx-rx.cpp_exe"
 
-        file = open(filename, 'w')
-        file.write(str(val+1))
-        file.close()
-
-        return {'value': val+1}
-
-class Decrement(Resource):
-    def get(self):
-        file = open(filename, 'r')
-        val = int(file.read())
-        file.close()
-
-        file = open(filename, 'w')
-        file.write(str(val-1))
-        file.close()
-
-        return {'value': val-1}
-
-class Refresh(Resource):
-    def get(self):
-        file = open(filename, 'r')
-        val = int(file.read())
-        file.close()
-
-        return {'value': val}
+parser = reqparse.RequestParser()
 
 class Transmit(Resource):
-    def get(self):
-        cmd = lora_binary + ' t'
-        os.system(cmd)
+    def post(self):
+        message = request.form['message']
+        print 'Transmit message: '+message
+        file = open(sendbuffer, 'w')
+        file.write(message)
+        file.close()
 
-        return {'error': 0}
+        file = open(sendflag, 'w')
+        file.write('1')
+        file.close()
+
+        return {'status': 1}
 
 class Receive(Resource):
     def get(self):
-        cmd = lora_binary + ' r'
-        os.system(cmd)
+        file = open(receivebuffer, 'r')
+        msg = file.read()
+        file.close()
 
-        return {'error': 0}
+        return {'message': msg}
 
 #Routes
-
-api.add_resource(Increment, '/increment') 
-api.add_resource(Decrement, '/decrement') 
-api.add_resource(Refresh, '/refresh') 
 api.add_resource(Transmit, '/transmit') 
 api.add_resource(Receive, '/receive') 
 
 @app.route('/')
 def home():
-    file = open(filename, 'r')
-    counter_val = file.read()
-    file.close()
-    
     file = open(configfile, 'r')
     rpi_name = file.read()
     file.close()
@@ -79,7 +52,6 @@ def home():
     file = open('home.html','r')
     html_string = file.read()
     file.close()
-    html_string = html_string.replace('counter-to-replace',counter_val)
     html_string = html_string.replace('rpi-name',rpi_name)
 
     return html_string
