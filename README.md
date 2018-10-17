@@ -44,3 +44,14 @@ From the root of the repository, type:
 cd python_server
 python server.py
 ```
+
+### Enabling the service to run at startup
+
+To make the Pi launch the web service at startup, add the following lines to /etc/rc.local *before* exit 0:
+
+```
+cd /home/pi/Documents/brazil-wireless-counter/python_server
+sudo -H -u pi python server.py &
+```
+
+Optionally, add ```service ssh start``` after those lines to enable SSH connectivity once the Pi is running.
