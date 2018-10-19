@@ -35,6 +35,9 @@ char sendFlagFile [] = "../../../../sendflag.dat"; //Path to file with counter v
 char sendBuffer [] = "../../../../send.dat"; //Path to file with counter value
 char receiveBuffer [] = "../../../../receive.dat"; //Path to file with counter value
 
+char sendMessage [140];
+char receiveMessage [140];
+
 void setup()
 {
   // Print a start message
@@ -76,75 +79,48 @@ void setup()
   delay(1000);
 }
 
-void readFile(void)
+void readMessageToSend(void)
 {
     ifstream file;
-    file.open(counterFilePath);
+    file.open(sendBuffer);
     
    if (file.is_open()) 
    {
-        file >> value;
-	printf("\nRead value from file: %s",value);
+        file >> sendMessage;
+	printf("\nRead value from file: %s", sendMessage);
    }
    else
    {
-	printf("\nError opening file to read");
+	printf("\nError opening %s file to read", sendBuffer);
    }
 
    file.close();
 }
 
-void writeFile(void)
+void writeReceivedMessage(void)
 {
    ofstream file;
-   file.open(counterFilePath);
+   file.open(receiveBuffer);
 
    if (file.good())
    {
-	file << value;
+	file << receiveMessage;
    }
    else
    {
-	printf("\nError opening file to write");
+	printf("\nError opening %s file to write", receiveBuffer);
    }
 
    file.close(); 
 }
 
-void transmit()
-{
-    e = sx1272.sendPacketTimeoutACK(0, value);
-    printf("\nPacket sent, state %d\n",e);
- 
-    delay(4000);
-}
-
-void receive()// Receive message
-{ 
-  e = sx1272.receivePacketTimeoutACK(10000);
-  if ( e == 0 )
-  {
-    printf("Receive packet with ACK, state %d\n",e);
-
-    for (unsigned int i = 0; i < sx1272.packet_received.length; i++)
-    {
-      value[i] = (char)sx1272.packet_received.data[i];
-    }
-    printf("Message: %s\n", value);
-
-  }
-  else {
-    printf("Receive packet with ACK, state %d\n",e);
-  }
-}
-
 //This funcion returns: 1 for transmission, 0 for reception, -1 if error
-int readSendFlag()
+char readSendFlag()
 {
     ifstream file;
     file.open(sendFlagFile);
-   
-   char value;
+ 
+   char value [4];
 
    if (file.is_open()) 
    {
@@ -158,35 +134,70 @@ int readSendFlag()
 
    file.close();
 
-   return int(value);
+   return value[0];
+}
+
+void setSendFlagToZero(void)
+{
+   ofstream file;
+   file.open(sendFlagFile);
+
+   if (file.good())
+   {
+	file << '0';
+   }
+   else
+   {
+	printf("\nError opening %s file to write\n", sendFlagFile);
+   }
+
+   file.close(); 
 }
 
 void loop()
 {
-	char buffer[140];
+	char send = readSendFlag();
 
-	while(true)
+	if(send == '1')//Transmit buffer
 	{
-		int send = readSendFlag();
+		//read sendBuffer
+		readMessageToSend();
 
-		if(send == 1)//Transmit buffer
-		{
-			//read sendBuffer
-			//transmit buffer
-			//clear sendBuffer
-			//sendFlag = 0
+		//transmit buffer
+		e = sx1272.sendPacketTimeoutACK(0, sendMessage);
 
-		}
-		else(send == 0) //Receive buffer
-		{
-			//receive Lora
-			//if (message)
-			//	write ReceiveBuffer
-		}
-		else // Error
-		{
-			return -1;
-		}
+		printf("Packet sent: %s\n", sendMessage);
+		//CHECK IF REQUIRED: clear sendBuffer
+		
+		//sendFlag = 0
+		setSendFlagToZero();
+	}
+	else if(send == '0') //Receive buffer
+	{
+		  // Receive message
+		  e = sx1272.receivePacketTimeoutACK(10000);
+		  if ( e == 0 )
+		  {
+		    printf("Receive packet with ACK, state %d\n",e);
+
+		    for (unsigned int i = 0; i < sx1272.packet_received.length; i++)
+		    {
+		      receiveMessage[i] = (char)sx1272.packet_received.data[i];
+		    }
+		    printf("Received message: %s\n", receiveMessage);
+		
+		    writeReceivedMessage();
+
+		  }
+		  else 
+		  {
+		    printf("Receive packet with ACK, state %d\n",e);
+		  }
+
+	}
+	else // Error
+	{
+		printf("Error ");
 	}
 }
 
@@ -194,7 +205,10 @@ int main(int argc, char *argv[]){
 	
 	setup(); //Configure Lora module
 
-	loop();
+	while(1)
+	{
+	   loop();
+	}
 
 	return 0;
 }
