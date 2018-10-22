@@ -166,7 +166,7 @@ void loop()
 		//transmit buffer
 		e = sx1272.sendPacketTimeoutACK(0, sendMessage);
 
-		printf("Packet sent: %s\n", sendMessage);
+		printf("\nPacket sent: %s", sendMessage);
 		//CHECK IF REQUIRED: clear sendBuffer
 		
 		//sendFlag = 0
@@ -178,26 +178,26 @@ void loop()
 		  e = sx1272.receivePacketTimeoutACK(10000);
 		  if ( e == 0 )
 		  {
-		    printf("Receive packet with ACK, state %d\n",e);
+		    printf("\nReceive packet with ACK, state %d",e);
 
 		    for (unsigned int i = 0; i < sx1272.packet_received.length; i++)
 		    {
 		      receiveMessage[i] = (char)sx1272.packet_received.data[i];
 		    }
-		    printf("Received message: %s\n", receiveMessage);
+		    printf("\nReceived message: %s", receiveMessage);
 		
 		    writeReceivedMessage();
 
 		  }
 		  else 
 		  {
-		    printf("Receive packet with ACK, state %d\n",e);
+		    printf("\nReceive packet with ACK, state %d",e);
 		  }
 
 	}
 	else // Error
 	{
-		printf("Error ");
+		printf("\nError in transmission/reception loop");
 	}
 }
 
