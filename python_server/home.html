@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>DIRI Wireless counter</title>
+<title>DIRI Wireless messenger</title>
 <style type="text/css" media="screen">
 body { background: #e7e7e7; font-family: Verdana, sans-serif; font-size: 11pt; }
 #page { background: #ffffff; margin: 50px; border: 2px solid #c0c0c0; padding: 10px; }
@@ -26,34 +26,14 @@ a:hover { text-decoration: none; color: #C00; background: #FC0; }
  
   $(document).ready(function() {
 
-    // setInterval(function(){ console.log('hello');}, 3000);
-
-   //  function x(){ console.log('hello2');}     
-   //  setInterval(x, 3000);
-
      $('#traButton').click(function(){
-
 	     var msg = $("#messageToSend").val();
-	     console.log(msg);
+	     console.log("Transmit message: "+msg);
 
 	     $.post("/transmit", {'message': msg} )		
-
-	  /*   var dt = new Date($.now());
-	     var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
-	     $("h5").html("Transmission start: "+time);
-
-	     $.get("/transmit", function(data) {
-		console.log('Transmit hit: '+data.value);		
-
-  	        var dt = new Date($.now());
-	        var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
-	        $("h5").html("Transmission end: "+time);
-	     }); 
-	*/     
-
      });
 
-     $('#recButton').click(function(){
+    function doReceive(){
 
 	     var dt = new Date($.now());
 	     var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
@@ -68,9 +48,11 @@ a:hover { text-decoration: none; color: #C00; background: #FC0; }
 	        $("h5").html("Reception end: "+time);
 
 	     });      
+     }
 
-     });
+     $('#recButton').click(doReceive());
 
+     setInterval(doReceive, 5000);
 
   });
   </script>
@@ -78,7 +60,7 @@ a:hover { text-decoration: none; color: #C00; background: #FC0; }
 	
 <div id="page">
  <div id="header">
- <h1> Wireless counter </h1>
+ <h1> Wireless messenger </h1>
  
  <h3> You're connected to Raspberry Pi rpi-name </h3>
 
@@ -93,11 +75,11 @@ a:hover { text-decoration: none; color: #C00; background: #FC0; }
   <button id="traButton" >Transmit</button>
   <button id="recButton" >Receive</button>
 
-  <br><br>Received message: (auto-refresh every 5 secs):
+  <br><br>Received message (auto-refresh every 5 secs):
 
   <h4 id="messageBox">Received message will be here </h4>
 
-  Transmission / Reception Status:
+  Last reception check:
   <h5>Idle</h5>
 
 
