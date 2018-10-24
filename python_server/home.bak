@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>DIRI Wireless messenger</title>
+<style type="text/css" media="screen">
+body { background: #e7e7e7; font-family: Verdana, sans-serif; font-size: 11pt; }
+#page { background: #ffffff; margin: 50px; border: 2px solid #c0c0c0; padding: 10px; }
+#header { background: #4b6983; border: 2px solid #7590ae; text-align: center; padding: 10px; color: #ffffff; }
+#header h1 { color: #ffffff; }
+#body { padding: 10px; }
+span.tt { font-family: monospace; }
+span.bold { font-weight: bold; }
+a:link { text-decoration: none; font-weight: bold; color: #C00; background: #ffc; }
+a:visited { text-decoration: none; font-weight: bold; color: #999; background: #ffc; }
+a:active { text-decoration: none; font-weight: bold; color: #F00; background: #FC0; }
+a:hover { text-decoration: none; color: #C00; background: #FC0; }
+</style>
+
+<script src="js/jquery-3.3.1.min.js"></script>
+
+</head>
+<body>
+
+  <script>
+ 
+  $(document).ready(function() {
+
+     $('#traButton').click(function(){
+	     var msg = $("#messageToSend").val();
+	     console.log("Transmit message: "+msg);
+
+	     $.post("/transmit", {'message': msg} )		
+     });
+
+    function doReceive(){
+
+	     var dt = new Date($.now());
+	     var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+	     $("h5").html("Reception start: "+time);
+
+	     $.get("/receive", function(data) {
+		$("#messageBox").html(data['message']);
+		console.log('Received message: '+data['message']);
+
+  	        var dt = new Date($.now());
+	        var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+	        $("h5").html("Reception end: "+time);
+
+	     });      
+     }
+
+     $('#recButton').click(doReceive());
+
+     setInterval(doReceive, 5000);
+
+  });
+  </script>
+	
+	
+<div id="page">
+ <div id="header">
+ <h1> Wireless messenger </h1>
+ 
+ <h3> You're connected to Raspberry Pi rpi-name </h3>
+
+  Data Innovation Research Institute.
+ </div>
+ <div id="body">
+
+  Type the message you want to send in the following box:<br><br>
+
+  <input id="messageToSend" type="text" name="messageToSend" maxlength="20" size="40"><br><br>
+
+  <button id="traButton" >Transmit</button>
+  <button id="recButton" >Receive</button>
+
+  <br><br>Received message (auto-refresh every 5 secs):
+
+  <h4 id="messageBox">Received message will be here </h4>
+
+  Last reception check:
+  <h5>Idle</h5>
+
+
+ </div>
+</div>
+<!-- s:853e9a42efca88ae0dd1a83aeb215047 -->
+</body>
+</html>
