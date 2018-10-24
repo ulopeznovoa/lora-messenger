@@ -27,13 +27,6 @@ Assuming that Python and pip are installed in the sytem, use the following comma
 pip install flask flask-restful
 ```
 
-Finally, enable SUID in the LoRa binary. This is required for the software to use the LoRa module. From the directory where you have clonned the repo, type:
-
-```
-cd lora_interface/cooking/code/LoRa/
-sudo ./make_suid ./main-tx-rx.cpp_exe
-```
-
 Optional: the letter in counter.conf (root of the repository) is read by the web server to show the RPi name in the web page. Change it to show a different one.
 
 ### Running the service
@@ -42,7 +35,9 @@ From the root of the repository, type:
 
 ```
 cd python_server
-python server.py
+python server.py &
+cd lora_interface/cooking/code/LoRa
+sudo ./main-messages.cpp_exe &
 ```
 
 ### Enabling the service to run at startup
@@ -50,8 +45,10 @@ python server.py
 To make the Pi launch the web service at startup, add the following lines to /etc/rc.local *before* exit 0:
 
 ```
-cd /home/pi/Documents/brazil-wireless-counter/python_server
+cd <REPLACE WITH PATH TO FOLDER>/brazil-wireless-counter/python_server
 sudo -H -u pi python server.py &
+cd <REPLACE WITH PATH TO FOLDER>/Documents/brazil-wireless-counter/lora_interface/cooking/code/LoRa
+./main-messages.cpp_exe &
 ```
 
 Optionally, add ```service ssh start``` after those lines to enable SSH connectivity once the Pi is running.
