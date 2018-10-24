@@ -81,12 +81,12 @@ void setup()
 
 void readMessageToSend(void)
 {
-    ifstream file;
-    file.open(sendBuffer);
+   ifstream file;
+   file.open(sendBuffer);
     
    if (file.is_open()) 
    {
-        file >> sendMessage;
+	file.getline(sendMessage, 140);
 	printf("\nRead value from file: %s", sendMessage);
    }
    else
@@ -94,7 +94,7 @@ void readMessageToSend(void)
 	printf("\nError opening %s file to read", sendBuffer);
    }
 
-   file.close();
+   file.close(); 
 }
 
 void writeReceivedMessage(void)
