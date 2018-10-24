@@ -47,7 +47,7 @@ To make the Pi launch the web service at startup, add the following lines to /et
 ```
 cd <REPLACE WITH PATH TO FOLDER>/brazil-wireless-counter/python_server
 sudo -H -u pi python server.py &
-cd <REPLACE WITH PATH TO FOLDER>/Documents/brazil-wireless-counter/lora_interface/cooking/code/LoRa
+cd <REPLACE WITH PATH TO FOLDER>/brazil-wireless-counter/lora_interface/cooking/code/LoRa
 ./main-messages.cpp_exe &
 ```
 
