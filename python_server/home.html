@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
  <head>
-  <title>LoRa Messenger</title>
+  <title>Mensagem LoRa</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
  
@@ -35,7 +35,7 @@
 
   	        var dt = new Date($.now());
 	        var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
-	        $("h5").html("Reception end: "+time);
+	        $("h5").html(time);
 
 	     });      
      }
@@ -50,24 +50,24 @@
 	
 <div id="page">
  <center>
- <h3> Long Range Messenger </h3>
+ <h3> Mensagem de longa distância </h3>
  
- <i> You're connected to Raspberry Pi rpi-name </i>
+ <i> Você está conectado ao Raspberry Pi rpi-name </i>
 
  <div id="body">
 
-  Type below your message (140 char max.):<br><br>
+  Digite sua mensagem abaixo (máx. 140 caracteres):<br><br>
 
   <input id="messageToSend" type="text" name="messageToSend" maxlength="140" size="30"><br><br>
 
-  <button id="traButton" >Transmit</button>
-  <button id="recButton" >Receive</button>
+  <button id="traButton" >Enviar</button>
+  <button id="recButton" >Receber</button>
 
-  <br><br>Received message (auto-refresh every 5 secs):
+  <br><br>Mensagem recebida (atualizado a cada 5 segundos):
 
   <h4 id="messageBox">Received message will be here </h4>
 
-  Last reception check:
+  Última verificação de recebimento:
   <h5>Idle</h5>
 
 
