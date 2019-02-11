@@ -2,7 +2,7 @@
 
 Software to enable a messenger through a LoRa network. Use as depicted below. Developed for the Citizen Science project - Data collection in Guapiruvu, Sete Barras, Brazil.
 
-![Architecture image]{https://github.com/ulopeznovoa/lora-messenger/blob/master/docs/arch.png}
+![Architecture image](https://raw.githubusercontent.com/ulopeznovoa/lora-messenger/master/docs/arch.png)
 
 ### Building blocks
 
@@ -10,7 +10,7 @@ Software to enable a messenger through a LoRa network. Use as depicted below. De
 2. Python to serve a web page and RESTful services
 3. Lora modules to interface with the antenna
 
-![Software stack image]{https://github.com/ulopeznovoa/lora-messenger/blob/master/docs/sw_stack.png}
+![Software stack image](https://raw.githubusercontent.com/ulopeznovoa/lora-messenger/master/docs/sw_stack.png)
 
 ### Setup
 
