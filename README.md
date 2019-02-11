@@ -1,11 +1,16 @@
-## brazil-wireless-counter
-Software for the Citizen Science project - Data collection in Sete Barras, Brazil
+## LoRa messenger
+
+Software to enable a messenger through a LoRa network. Use as depicted below. Developed for the Citizen Science project - Data collection in Guapiruvu, Sete Barras, Brazil.
+
+![Architecture image]{https://github.com/ulopeznovoa/lora-messenger/blob/master/docs/arch.png}
 
 ### Building blocks
 
 1. Hostapd and dnsmasq to serve a Wi-Fi hotspot 
 2. Python to serve a web page and RESTful services
 3. Lora modules to interface with the antenna
+
+![Software stack image]{https://github.com/ulopeznovoa/lora-messenger/blob/master/docs/sw_stack.png}
 
 ### Setup
 
